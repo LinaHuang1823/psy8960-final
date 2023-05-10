@@ -1,0 +1,161 @@
+---
+title: "dashboard"
+author: "Lina Huang"
+date: "2023-05-10"
+output: html_document
+runtime: shiny
+---
+
+# Script Settings and Resources
+```{r section 1, message=F}
+library(tidyverse)
+library(shiny)
+library(rsconnect)
+```
+
+# Data Import and Cleaning
+```{r section 2}
+# Load the dataset
+shiny_data<- read.csv("../data/combined_dataset.csv")
+```
+
+# User interface (UI) of Shiny Apps
+```{r}
+# Define UI for application
+ui <- fluidPage(
+  # Application title
+  titlePanel("people_dashboard"),
+
+  # Arrange the layout into a sidebar and a main panel
+  sidebarLayout(
+    # Define the contents of the sidebar panel
+    sidebarPanel(
+      # Create a dropdown input to select an outcome variable
+      selectInput("outcome", "Select an outcome variable:",
+                  choices = c("Monthly Income", "Turnover Status", "Job Satisfaction")),
+      # Create a dropdown input to select a department
+      selectInput("department", "Select a department:",
+                  choices = c("All", unique(shiny_data$Department))),
+      # Create a dropdown input to select a field of education
+      selectInput("educationField", "Select a field of education:",
+                  choices = c("All", unique(shiny_data$EducationField))),
+      # Create a dropdown input to select gender
+      selectInput("gender", "Select gender:",
+                  choices = c("All", unique(shiny_data$Gender))),
+      # Create a dropdown input to select a job role
+      selectInput("jobRole", "Select a job role:",
+                  choices = c("All", unique(shiny_data$JobRole)))
+    ),
+
+    # Define the contents of the main panel
+    mainPanel(
+      # Display the plot based on user input
+      plotOutput("outcome_plot"),
+      # Display the summary table based on user input
+      tableOutput("summary_table")
+    )
+  )
+)
+
+```
+
+#server of Shiny Apps 
+```{r}
+# Convert Attrition to numeric values (1 for 'Yes', 0 for 'No')
+shiny_data$Attrition <- ifelse(shiny_data$Attrition == "Yes", 1, 0)
+
+server <- function(input, output) {
+  
+  # Filter dataset based on user input
+  filtered_data <- reactive({
+    data <- shiny_data
+    
+    # Filter data by department if a specific department is selected
+    if (input$department != "All") {
+      data <- data[data$Department == input$department, ]
+    }
+    
+    # Filter data by education field if a specific field is selected
+    if (input$educationField != "All") {
+      data <- data[data$EducationField == input$educationField, ]
+    }
+    
+    # Filter data by gender if a specific gender is selected
+    if (input$gender != "All") {
+      data <- data[data$Gender == input$gender, ]
+    }
+    
+    # Filter data by job role if a specific job role is selected
+    if (input$jobRole != "All") {
+      data <- data[data$JobRole == input$jobRole, ]
+    }
+    
+    data
+  })
+  
+  # Create plot based on user input
+  output$outcome_plot <- renderPlot({
+    data <- filtered_data()
+    outcome_var <- NULL
+    
+    # Plot histogram of Monthly Income if it is the selected outcome
+    if (input$outcome == "Monthly Income") {
+      outcome_var <- "MonthlyIncome"
+      ggplot(data, aes_string(x = outcome_var)) +
+        geom_histogram(binwidth = 500) +
+        labs(x = input$outcome, y = "Count") +
+        theme_minimal()
+    # Plot bar chart of Turnover Status if it is the selected outcome
+    } else if (input$outcome == "Turnover Status") {
+      outcome_var <- "Attrition"
+      ggplot(data, aes_string(x = outcome_var)) +
+        geom_bar() +
+        labs(x = input$outcome, y = "Count") +
+        theme_minimal()
+    # Plot bar chart of Job Satisfaction if it is the selected outcome
+    } else if (input$outcome == "Job Satisfaction") {
+      outcome_var <- "JobSatisfaction"
+      ggplot(data, aes_string(x = outcome_var)) +
+        geom_bar() +
+        labs(x = input$outcome, y = "Count") +
+        theme_minimal()
+    }
+  })
+  
+  # Create summary table based on user input
+  output$summary_table <- renderTable({
+    data <- filtered_data()
+    outcome_var <- NULL
+    group_vars <- c("Department", "EducationField", "Gender", "JobRole")
+    
+    # Assign the appropriate variable name based on the selected outcome
+    if (input$outcome == "Monthly Income") {
+      outcome_var <- "MonthlyIncome"
+    } else if (input$outcome == "Turnover Status") {
+      outcome_var <- "Attrition"
+    } else if (input$outcome == "Job Satisfaction") {
+      outcome_var <- "JobSatisfaction"
+    }
+    
+    # Calculate mean and standard deviation for the selected outcome variable
+    # grouped by Department, EducationField, Gender, and JobRole
+    data %>%
+      group_by(across(all_of(group_vars))) %>%
+      summarise(Mean = mean(get(outcome_var), na.rm = TRUE),
+                SD = sd(get(outcome_var), na.rm = TRUE)) %>%
+      ungroup()
+  })
+}   
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+# Reproducible Online Resources
+# The interactive web app is available by clicking this link (https://linah.shinyapps.io/people_dashboard/).
+```
+
+
+
+
+
+
