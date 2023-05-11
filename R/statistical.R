@@ -133,28 +133,39 @@ sentence <- sprintf(
 print(sentence)
 
 # Publication Results for H3
-#create publication-ready sentence for H3
-intercept <- round(tidy_mod_h3$estimate[1], 2)
-rel_sat_coef <- round(tidy_mod_h3$estimate[2], 2)
-gender_coef <- round(tidy_mod_h3$estimate[3], 2)
-interaction_coef <- round(tidy_mod_h3$estimate[4], 2)
-rel_sat_p_value <- round(tidy_mod_h3$p.value[2], 4)
-gender_p_value <- round(tidy_mod_h3$p.value[3], 4)
-interaction_p_value <- round(tidy_mod_h3$p.value[4], 4)
+# Create publication-ready sentence for H3
+intercept <- str_remove(round(tidy_mod_h3$estimate[1], 2), "^0")
+rel_sat_coef <- formatC(round(tidy_mod_h3$estimate[2], 2), format = "f", digits = 2)
+gender_coef <- formatC(round(tidy_mod_h3$estimate[3], 2), format = "f", digits = 2)
+interaction_coef <- formatC(round(tidy_mod_h3$estimate[4], 2), format = "f", digits = 2)
+rel_sat_p_value <- formatC(round(tidy_mod_h3$p.value[2], 2), format = "f", digits = 2)
+gender_p_value <- formatC(round(tidy_mod_h3$p.value[3], 2), format = "f", digits = 2)
+interaction_p_value <- formatC(round(tidy_mod_h3$p.value[4], 2), format = "f", digits = 2)
+# Remove leading zero from coefficients
+rel_sat_coef <- str_remove(rel_sat_coef, "^0")
+gender_coef <- str_remove(gender_coef, "^0")
+interaction_coef <- str_replace(interaction_coef, "^(-0)(\\.\\d+)$", "-\\2")
+# Remove leading zero from p-values
+rel_sat_p_value <- str_remove(rel_sat_p_value, "^0")
+gender_p_value <- str_remove(gender_p_value, "^0")
+interaction_p_value <- str_remove(interaction_p_value, "^0")
+
 sentence <- sprintf("In the multiple regression analysis, 
-                    the relationship between tenure and all predictors are not significant. 
-                    The coefficients and p values are below:
-                    relationship satisfaction(b = %0.2f, p = %.4f), 
-                    gender(b = %0.2f, p = %.4f). 
-                    The interaction effect between relationship satisfaction 
-                    and gender was also not significant (b = %0.2f, p = %.4f).",
+the relationship between tenure and all the predictors is not significant. 
+The coefficients and p-values are: Relationship Satisfaction (b = %s, p = %s), 
+Gender (b = %s, p = %s). The interaction effect between Relationship Satisfaction 
+and Gender was also not significant (b = %s, p = %s).",
                     rel_sat_coef,
                     rel_sat_p_value,
                     gender_coef,
+                    gender_p_value,
                     interaction_coef,
                     interaction_p_value)
-print(sentence)
-                    
+
+sentence
+
+
+
 
 
 
