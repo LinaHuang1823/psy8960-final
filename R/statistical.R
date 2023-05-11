@@ -123,8 +123,9 @@ sentence1
 # Publication Results for H2
 #create publication-ready sentence for H2
 # Extract F-value and p-value
-f_value <- round(anova_summary_df$FValue[1], 2)
-p_value <- round(anova_summary_df$Pr[1], 2)
+f_value <- round(as.numeric(anova_summary_df$FValue[1]), 2)
+# Extract p-value
+p_value <- round(as.numeric(anova_summary_df$Pr[1]), 2)
 # Format the p-value to remove leading zero
 formatted_p_value <- gsub("^0\\.", ".", as.character(p_value))
 # Create a publication-ready sentence
