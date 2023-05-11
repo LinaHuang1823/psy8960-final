@@ -98,9 +98,10 @@ df <- cor_H1$parameter
 p_value <- cor_H1$p.value
 # Format the correlation value and p-value to remove leading zero
 formatted_cor_value <- gsub("^0", "", sprintf("%.2f", cor_value))
+formatted_cor_value <- gsub("^(-)0", "\\1", formatted_cor_value)
 formatted_p_value <- gsub("^0", "", sprintf("%.2f", p_value))
 # Create a publication-ready sentence
-sentence <- paste0(
+sentence1 <- paste0(
   "The correlation between Monthly Income and Performance Rating was r(",
   df,
   ") = ",
@@ -112,7 +113,7 @@ sentence <- paste0(
   " statistically significant."
 )
 # Print the sentence
-print(sentence)
+sentence1
 
 # Publication Results for H2
 #create publication-ready sentence for H2
@@ -122,7 +123,7 @@ p_value <- round(anova_summary_df$Pr[1], 2)
 # Format the p-value to remove leading zero
 formatted_p_value <- gsub("^0\\.", ".", as.character(p_value))
 # Create a publication-ready sentence
-sentence <- sprintf(
+sentence2 <- sprintf(
   "The analysis of variance (ANOVA) revealed that there is a difference in monthly pay between departments (F(%d, %d) = %0.2f, p = %s).",
   anova_summary_df$Df[1],
   anova_summary_df$Df[2],
@@ -130,7 +131,7 @@ sentence <- sprintf(
   formatted_p_value
 )
 # Print the sentence
-print(sentence)
+sentence2
 
 # Publication Results for H3
 # Create publication-ready sentence for H3
@@ -150,7 +151,7 @@ rel_sat_p_value <- str_remove(rel_sat_p_value, "^0")
 gender_p_value <- str_remove(gender_p_value, "^0")
 interaction_p_value <- str_remove(interaction_p_value, "^0")
 
-sentence <- sprintf("In the multiple regression analysis, 
+sentence3 <- sprintf("In the multiple regression analysis, 
 the relationship between tenure and all the predictors is not significant. 
 The coefficients and p-values are: Relationship Satisfaction (b = %s, p = %s), 
 Gender (b = %s, p = %s). The interaction effect between Relationship Satisfaction 
@@ -162,7 +163,7 @@ and Gender was also not significant (b = %s, p = %s).",
                     interaction_coef,
                     interaction_p_value)
 
-sentence
+sentence3
 
 
 
