@@ -113,7 +113,6 @@ print(model_comparison)
 
 #Part 2-2:What is the incremental predictive accuracy gained by including text 
 #data in your model versus not including text data?
-
 # Identify columns with less than two unique values
 low_var_cols <- sapply(train_tbl, function(col) length(unique(col)) < 2)
 
