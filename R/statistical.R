@@ -19,11 +19,16 @@ anova_summary <- summary(anova_H2) # Extract the summary statistics from the ANO
 # Create a data frame with the necessary information
 anova_summary_df <- data.frame(
   Df = c(anova_summary[[1]]$Df[1], anova_summary[[1]]$Df[2]),
-  SumSq = c(anova_summary[[1]]$Sum[1], anova_summary[[1]]$Sum[2]),
-  MeanSq = c(anova_summary[[1]]$Mean[1], anova_summary[[1]]$Mean[2]),
-  FValue = c(anova_summary[[1]]$F[1], NA),
-  Pr = c(anova_summary[[1]]$"Pr(>F)"[1], NA)
+  SumSq = sprintf("%.2f", round(c(anova_summary[[1]]$Sum[1], anova_summary[[1]]$Sum[2]), 2)),
+  MeanSq = sprintf("%.2f", round(c(anova_summary[[1]]$Mean[1], anova_summary[[1]]$Mean[2]), 2)),
+  FValue = sprintf("%.2f", round(c(anova_summary[[1]]$F[1], NA), 3)),
+  Pr = sprintf("%.2f", round(c(anova_summary[[1]]$"Pr(>F)"[1], NA), 2))
 )
+# Remove leading zeros
+anova_summary_df$SumSq <- gsub("^0", "", anova_summary_df$SumSq)
+anova_summary_df$MeanSq <- gsub("^0", "", anova_summary_df$MeanSq)
+anova_summary_df$FValue <- gsub("^0", "", anova_summary_df$FValue)
+anova_summary_df$Pr <- gsub("^0", "", anova_summary_df$Pr)
 # Set the row names for the data frame
 rownames(anova_summary_df) <- c("Department", "Residuals")
 # Set the output file path
