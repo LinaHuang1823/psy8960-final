@@ -1,5 +1,5 @@
-"term","estimate","statistic","p.value"
-"(Intercept)",6.38923834267742,9.36274170820646,2.89965071105257e-20
-"RelationshipSatisfaction",0.328600513545128,1.39637735275186,0.162816991109266
-"GenderMale",0.612258680656181,0.689240228173608,0.490783610585227
-"RelationshipSatisfaction:GenderMale",-0.388073589140166,-1.27275107767923,0.203312697134624
+"Term","Coefficient","Statistic","P_Value"
+"(Intercept)","6.39","9.36",".00"
+"RelationshipSatisfaction",".33","1.40",".16"
+"GenderMale",".61",".69",".49"
+"RelationshipSatisfaction:GenderMale","-0.39","-1.27",".20"
